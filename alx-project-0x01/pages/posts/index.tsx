@@ -1,12 +1,12 @@
-import React from "react";
-import PostCard from "@/components/common/PostCard";
+import Header from "@/components/layout/Header";
 
 const Posts: React.FC = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Posts</h1>
-      <PostCard />
-      <PostCard />
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-grow flex items-center justify-center">
+        <h1 className="text-3xl font-bold">Posts Page</h1>
+      </main>
     </div>
   );
 };
