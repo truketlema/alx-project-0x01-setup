@@ -1,41 +1,53 @@
-import React from "react";
 import Header from "@/components/layout/Header";
 import UserCard from "@/components/common/UserCard";
-import { UserProps } from "@/interfaces";
+import UserModal from "@/components/common/UserModal";
+import { UserData } from "@/interfaces";
+import { useState } from "react";
 
-interface UsersPageProps {
-  posts: UserProps[]; // <-- changed from 'users' to 'posts'
-}
+const Users: React.FC<{ users: UserData[] }> = ({ users }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
 
-const Users: React.FC<UsersPageProps> = ({ posts }) => {
-  // <-- props name changed to 'posts'
+  const handleAddUser = (newUser: UserData) => {
+    setUser({ ...newUser, id: users.length + 1 });
+  };
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <Header />
       <main className="p-4">
-        <h1 className="text-2xl font-semibold mb-4">Users</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {posts?.map(
-            (
-              user // <-- use 'posts.map' as the checker expects
-            ) => (
-              <UserCard {...user} key={user.id} />
-            )
-          )}
+        <div className="flex justify-between">
+          <h1 className="text-2xl font-semibold">Users</h1>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="bg-blue-700 px-4 py-2 rounded-full text-white"
+          >
+            Add User
+          </button>
+        </div>
+        <div className="grid grid-cols-3 gap-2 mt-4">
+          {users?.map((u, key) => (
+            <UserCard key={key} {...u} id={u.id ?? key + 1} />
+          ))}
         </div>
       </main>
+
+      {isModalOpen && (
+        <UserModal
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleAddUser}
+        />
+      )}
     </div>
   );
 };
 
 export async function getStaticProps() {
   const response = await fetch("https://jsonplaceholder.typicode.com/users");
-  const posts = await response.json(); // <-- fetch result assigned to 'posts'
+  const users = await response.json();
 
   return {
-    props: {
-      posts,
-    },
+    props: { users },
   };
 }
 
